@@ -1,3 +1,5 @@
+### node, typescript, prisma, postgresql, apollo
+
 start dev environemnt
 ```
 docker-compose up
