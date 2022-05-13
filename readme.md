@@ -6,5 +6,9 @@ docker-compose up
 ```
 run migrations
 ```
-npx prisma migrate dev --name init
+npm run migrate
+```
+open prisma studio
+```
+npx prisma studio
 ```

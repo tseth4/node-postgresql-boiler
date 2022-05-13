@@ -1,33 +1,48 @@
-const { Pool, Client } = require("pg");
-const client = new Client();
-const dotenv = require("dotenv");
-const express = require("express");
-const router = require("express").Router();
-var bodyParser = require("body-parser");
+import { createServer } from "http";
+import express from "express";
+import { ApolloServer, gql } from "apollo-server-express";
+// const { prisma } = require('./prisma/client')
 
-const pool = new Pool({
-  user: process.env.DB_USERNAME,
-  host: 'host.docker.internal',
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-})
 
-let app = express();
+// const pool = new Pool({
+//   user: process.env.DB_USERNAME,
+//   host: "host.docker.internal",
+//   database: process.env.DB_NAME,
+//   password: process.env.DB_PASSWORD,
+//   port: process.env.DB_PORT,
+// });
 
-var port = process.env.PORT || 8080;
+const startServer = async () => {
+  const app = express();
+  const httpServer = createServer(app);
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.static("client/build"));
-
-app.get("/rides", (req: any, res: any) => {
-  pool.query('SELECT * FROM accounts', (error: any, results: any) => {
-    if (error) {
-      throw error
+  const typeDefs = gql`
+    type Query {
+      hello: String
     }
-    res.status(200).json(results.rows)
-  })
-});
+  `;
 
-app.listen(port, () => console.log(`server started on port ${port}`));
+  const resolvers = {
+    Query: {
+      hello: () => "Hello world!",
+    },
+  };
+
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
+
+  await apolloServer.start();
+
+  apolloServer.applyMiddleware({
+    app,
+    path: "/api",
+  });
+
+  httpServer.listen({ port: process.env.PORT || 4000 }, () =>
+    console.log(`Server listening on localhost:4000${apolloServer.graphqlPath}`)
+  );
+};
+
+startServer();
