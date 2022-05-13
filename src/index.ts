@@ -1,8 +1,8 @@
-const { Pool, Client } = require('pg')
-const client = new Client()
-const dotenv = require('dotenv');
+const { Pool, Client } = require("pg");
+const client = new Client();
+const dotenv = require("dotenv");
 const express = require("express");
-const router = require('express').Router();
+const router = require("express").Router();
 var bodyParser = require("body-parser");
 
 const pool = new Pool({
@@ -21,15 +21,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static("client/build"));
 
-app.get('/rides', (req, res) => {
-  pool.query('SELECT * FROM accounts', (error, results) => {
+app.get("/rides", (req: any, res: any) => {
+  pool.query('SELECT * FROM accounts', (error: any, results: any) => {
     if (error) {
       throw error
     }
     res.status(200).json(results.rows)
   })
 });
-
-
 
 app.listen(port, () => console.log(`server started on port ${port}`));
