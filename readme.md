@@ -2,6 +2,7 @@
 
 start dev environemnt
 ```
+docker-compose build
 docker-compose up
 ```
 run migrations
